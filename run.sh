@@ -14,20 +14,13 @@
 # which are present in the converted tables
 for f in $(ls output/utf8/)
 do 
-	src/extract-data.sh output/utf8/${f} >> output/temp-and-precip.csv
+	src/extract-data.sh output/utf8/${f} >> output/tmp.csv
 done
 
-# Finally, create another table with the location of the climatic stations
-# cat output/utf8/normal*-utf8.txt |\
-	# grep 'ESTACION' |\
-	# tr -s ' ' ' ' |\
-	# sed 's/,//g' |\
-	# sed 's/ESTACION: \| LATITUD: \| LONGITUD: \|ALTURA: /,/g' |\
-	# grep -v '^$' |\
-	# sed "s/\°\|'/,/g" |\
-	# sed 's/\" [NW]*\.//g' |\
-	# sed 's/ MSNM\.//g' |\
-	# sed 's/^,//g' |\
-	# sed 's/^[0-9]*/&,/g' |\
-	# sed 's/, \| ,/,/g' |\
-	# sed 's/^000//g' >> output/estaciones.csv
+# When data don't exist in the original tables, the script keeps the word
+# "NORMAL". Therefore, "NORMAL" means missing data, and these rows must be
+# removed
+
+grep -v '^"$\|NORMAL' output/tmp.csv > output/smn-raw-data.csv
+
+rm output/tmp.csv
